@@ -15,6 +15,7 @@
     "@babel/register": "^7.0.0",
     "babel-loader": "^8.0.0",
     "documentation": "^9.0.0-alpha.0",
+    "eslint": "^5.10.0",
     "expose-loader": "^0.7.5",
     "growl": "~> 1.10.0",
     "jsdom": "9.8.3",
@@ -30,6 +31,7 @@
     "test": "mocha ./test/**/*.js --exit -r @babel/register -r jsdom-global/register",
     "docs": "documentation build js/phoenix.js -f html -o ../doc/js",
     "build": "webpack --mode production",
-    "watch": "webpack --mode development --watch"
+    "watch": "webpack --mode development --watch",
+    "lint": "eslint ."
   }
 }
