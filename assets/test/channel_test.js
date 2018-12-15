@@ -1,10 +1,9 @@
+import {Channel, Socket} from "../js/phoenix"
+import {WebSocket, Server as WebSocketServer} from "mock-socket"
+import {decode, encode} from "./serializer"
 import assert from "assert"
-
 import jsdom from "jsdom"
 import sinon from "sinon"
-import {WebSocket, Server as WebSocketServer} from "mock-socket"
-import {encode, decode} from "./serializer"
-import {Channel, Socket} from "../js/phoenix"
 
 let channel, socket
 
@@ -264,7 +263,7 @@ describe("join", () => {
 })
 
 describe("joinPush", () => {
-  let joinPush, clock, response
+  let clock, joinPush, response
 
   const helpers = {
     receiveOk() {

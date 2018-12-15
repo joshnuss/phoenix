@@ -1,10 +1,9 @@
+import {LongPoll, Socket} from "../js/phoenix"
+import {WebSocket, Server as WebSocketServer} from "mock-socket"
+import {decode, encode} from "./serializer"
 import assert from "assert"
-
 import jsdom from "jsdom"
 import sinon from "sinon"
-import {WebSocket, Server as WebSocketServer} from "mock-socket"
-import {encode, decode} from "./serializer"
-import {Socket, LongPoll} from "../js/phoenix"
 
 let socket
 
@@ -42,9 +41,9 @@ describe("constructor", () => {
   })
 
   it("overrides some defaults with options", () => {
-    const customTransport = function transport() {}
-    const customLogger = function logger() {}
-    const customReconnect = function reconnect() {}
+    const customTransport = () => null
+    const customLogger = () => null
+    const customReconnect = () => null
 
     socket = new Socket("/socket", {
       timeout: 40000,
@@ -166,9 +165,9 @@ describe("connect with WebSocket", () => {
     let closes = 0
     socket.onClose(() => ++closes)
     let lastError
-    socket.onError((error) => lastError = error)
+    socket.onError((error) => { lastError = error })
     let lastMessage
-    socket.onMessage((message) => lastMessage = message.payload)
+    socket.onMessage((message) => { lastMessage = message.payload })
 
     socket.connect()
 
@@ -181,7 +180,7 @@ describe("connect with WebSocket", () => {
     socket.conn.onerror[0]("error")
     assert.equal(lastError, "error")
 
-    const data = {"topic":"topic","event":"event","payload":"payload","status":"ok"}
+    const data = {topic: "topic", event: "event", payload: "payload", status: "ok"}
     socket.conn.onmessage[0]({data: encode(data)})
     assert.equal(lastMessage, "payload")
   })
@@ -225,9 +224,9 @@ describe("connect with long poll", () => {
     let closes = 0
     socket.onClose(() => ++closes)
     let lastError
-    socket.onError((error) => lastError = error)
+    socket.onError((error) => { lastError = error })
     let lastMessage
-    socket.onMessage((message) => lastMessage = message.payload)
+    socket.onMessage((message) => { lastMessage = message.payload })
 
     socket.connect()
 
@@ -243,7 +242,7 @@ describe("connect with long poll", () => {
 
     socket.connect()
 
-    const data = {"topic":"topic","event":"event","payload":"payload","status":"ok"}
+    const data = {topic: "topic", event: "event", payload: "payload", status: "ok"}
 
     socket.conn.onmessage({data: encode(data)})
     assert.equal(lastMessage, "payload")
@@ -498,7 +497,7 @@ describe("sendHeartbeat", () => {
   it("closes socket when heartbeat is not ack'd within heartbeat window", () => {
     let closed = false
     socket.conn.readyState = 1 // open
-    socket.conn.onclose = () => closed = true
+    socket.conn.onclose = () => { closed = true }
     socket.sendHeartbeat()
     assert.equal(closed, false)
 
@@ -520,7 +519,7 @@ describe("sendHeartbeat", () => {
     socket.conn.readyState = 0 // connecting
 
     const spy = sinon.spy(socket.conn, "send")
-    const data = encode({topic: "phoenix", event: "heartbeat", payload: {},ref: "1"})
+    const data = encode({topic: "phoenix", event: "heartbeat", payload: {}, ref: "1"})
 
     socket.sendHeartbeat()
     assert.ok(spy.neverCalledWith(data))
@@ -776,17 +775,17 @@ describe("onConnMessage", () => {
   })
 
   it("triggers onMessage callback", () => {
-    const message = {"topic":"topic","event":"event","payload":"payload","ref":"ref"}
+    const message = {topic: "topic", event: "event", payload: "payload", ref: "ref"}
     const spy = sinon.spy()
     socket.onMessage(spy)
     socket.onConnMessage({data: encode(message)})
 
     assert.ok(spy.calledWith({
-      "topic": "topic",
-      "event": "event",
-      "payload": "payload",
-      "ref": "ref",
-      "join_ref": null
+      topic: "topic",
+      event: "event",
+      payload: "payload",
+      ref: "ref",
+      join_ref: null
     }))
   })
 })

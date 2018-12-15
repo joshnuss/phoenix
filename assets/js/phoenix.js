@@ -1021,7 +1021,7 @@ export class LongPoll {
     return(endPoint
       .replace("ws://", "http://")
       .replace("wss://", "https://")
-      .replace(new RegExp("(.*)\/" + TRANSPORTS.websocket), "$1/" + TRANSPORTS.longpoll))
+      .replace(new RegExp("(.*)/" + TRANSPORTS.websocket), "$1/" + TRANSPORTS.longpoll))
   }
 
   endpointURL(){
@@ -1042,11 +1042,14 @@ export class LongPoll {
     if(!(this.readyState === SOCKET_STATES.open || this.readyState === SOCKET_STATES.connecting)){ return }
 
     Ajax.request("GET", this.endpointURL(), "application/json", null, this.timeout, this.ontimeout.bind(this), (resp) => {
+      let status;
+
       if(resp){
-        var {status, token, messages} = resp
+        status = resp.status;
+        var {token, messages} = resp
         this.token = token
       } else{
-        var status = 0
+        status = 0
       }
 
       switch(status){
@@ -1145,7 +1148,7 @@ export class Ajax {
 
   static serialize(obj, parentKey){
     let queryStr = []
-    for(var key in obj){ if(!obj.hasOwnProperty(key)){ continue }
+    for(let key in obj){ if(!obj.hasOwnProperty(key)){ continue }
       let paramKey = parentKey ? `${parentKey}[${key}]` : key
       let paramVal = obj[key]
       if(typeof paramVal === "object"){

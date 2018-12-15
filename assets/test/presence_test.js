@@ -1,6 +1,5 @@
-import assert from "assert"
-
 import {Presence} from "../js/phoenix"
+import assert from "assert"
 
 let clone = (obj) => { return JSON.parse(JSON.stringify(obj)) }
 
@@ -145,10 +144,14 @@ describe("list", () => {
   })
 
   it("lists with custom function", () => {
-    let state = {u1: {metas: [
-      {id: 1, phx_ref: "1.first"},
-      {id: 1, phx_ref: "1.second"}]
-    }}
+    let state = {
+      u1: {
+        metas: [
+          {id: 1, phx_ref: "1.first"},
+          {id: 1, phx_ref: "1.second"}
+        ]
+      }
+    }
 
     let listBy = (key, {metas: [first, ...rest]}) => {
       return first
@@ -208,8 +211,8 @@ describe("instance", () => {
     assert.deepEqual(presence.list(listByFirst), [{id: 1, phx_ref: "1"}])
     assert.deepEqual(presence.pendingDiffs, [])
     assert.deepEqual(onJoins, [
-      {id: "u1", current: undefined, newPres: {metas: [{id: 1, phx_ref: "1"}]}},
-      {id: "u2", current: undefined, newPres: {metas: [{id: 2, phx_ref: "2"}]}}
+      {id: "u1", current: null, newPres: {metas: [{id: 1, phx_ref: "1"}]}},
+      {id: "u2", current: null, newPres: {metas: [{id: 2, phx_ref: "2"}]}}
     ])
 
     // disconnect and reconnect
